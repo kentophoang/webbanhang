@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\config",
+    "\\app\\controllers",
+    "\\app\\models",
+    "\\app\\views",
+    "\\app\\views\\product",
+    "\\app\\views\\shares",
+    "\\public"
+  ],
+  "SelectedNode": "\\public",
+  "PreviewInSolutionExplorer": false
+}
