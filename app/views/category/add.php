@@ -1,25 +1,34 @@
-&lt;?php include &#39;app/views/shares/header.php&#39;; ?&gt;
-&lt;div class=&quot;container mt-5&quot;&gt;
-    &lt;div class=&quot;row justify-content-center&quot;&gt;
-        &lt;div class=&quot;col-lg-6&quot;&gt;
-            &lt;div class=&quot;card shadow-sm&quot;&gt;
-                &lt;div class=&quot;card-header bg-primary text-white&quot;&gt;
-                    &lt;h3 class=&quot;mb-0&quot;&gt;Thêm Danh mục mới&lt;/h3&gt;
-                &lt;/div&gt;
-                &lt;div class=&quot;card-body&quot;&gt;
-                    &lt;form action=&quot;/webbanhang/category/create&quot; method=&quot;POST&quot;&gt;
-                        &lt;div class=&quot;mb-3&quot;&gt;
-                            &lt;label for=&quot;name&quot; class=&quot;form-label fw-bold&quot;&gt;Tên Danh mục&lt;/label&gt;
-                            &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;name&quot; name=&quot;name&quot; placeholder=&quot;Ví dụ: Điện thoại, Laptop...&quot; required&gt;
-                        &lt;/div&gt;
-                        &lt;div class=&quot;d-flex justify-content-end&quot;&gt;
-                            &lt;a href=&quot;/webbanhang/category&quot; class=&quot;btn btn-secondary me-2&quot;&gt;Hủy&lt;/a&gt;
-                            &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Lưu&lt;/button&gt;
-                        &lt;/div&gt;
-                    &lt;/form&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;?php include &#39;app/views/shares/footer.php&#39;; ?&gt;
+<?php include 'app/views/shares/header.php'; ?>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Thêm Danh mục mới</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/webbanhang/category/create" method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">Tên Danh mục</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Ví dụ: Điện thoại, Laptop..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="parent_id" class="form-label fw-bold">Thuộc danh mục cha</label>
+                            <select class="form-select" id="parent_id" name="parent_id">
+                                <option value="">-- Là danh mục gốc --</option>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= $cat->id ?>"><?= htmlspecialchars($cat->name) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <a href="/webbanhang/category" class="btn btn-secondary me-2">Hủy</a>
+                            <button type="submit" class="btn btn-primary">Lưu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php include 'app/views/shares/footer.php'; ?>

@@ -1,6 +1,4 @@
 <?php
-// Tốt nhất là nên require helper và bắt đầu session ở đầu file header
-// để đảm bảo chúng luôn sẵn sàng trên mọi trang.
 require_once 'app/helpers/SessionHelper.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -17,12 +15,9 @@ if (session_status() === PHP_SESSION_NONE) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    <!-- CSS tùy chỉnh cho Header mới -->
     <style>
         body {
-            /* Thêm padding ở trên để nội dung không bị header che mất */
             padding-top: 135px; 
-            /* Đảm bảo footer luôn ở dưới cùng nếu nội dung ngắn */
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -44,7 +39,7 @@ if (session_status() === PHP_SESSION_NONE) {
             color: #495057;
         }
         .header-actions .bi {
-            font-size: 1.5rem; /* Tăng kích thước icon */
+            font-size: 1.5rem;
             vertical-align: middle;
         }
         .search-form {
@@ -67,7 +62,6 @@ if (session_status() === PHP_SESSION_NONE) {
 <body>
 
 <header class="sticky-header">
-    <!-- Thanh thông tin phụ ở trên cùng -->
     <div class="header-top border-bottom d-none d-md-block">
         <div class="container-fluid d-flex justify-content-between">
             <span>Chào mừng đến với Web Bán Hàng!</span>
@@ -75,21 +69,16 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
     </div>
     
-    <!-- Thanh chính chứa Logo, Tìm kiếm, và Hành động -->
     <div class="header-main border-bottom">
         <div class="container-fluid d-flex justify-content-between align-items-center">
-            <!-- Logo -->
             <a class="navbar-brand fs-4 fw-bold" href="/webbanhang/Product">Web Bán Hàng</a>
             
-            <!-- Ô tìm kiếm -->
             <form class="d-flex search-form mx-4" action="/webbanhang/product/search" method="GET">
                 <input class="form-control me-2" type="search" name="q" placeholder="Bạn tìm gì hôm nay?" aria-label="Search" required>
                 <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
             </form>
             
-            <!-- Các nút hành động (Tài khoản, Giỏ hàng) -->
             <div class="header-actions d-flex align-items-center">
-                <!-- Logic hiển thị Tài khoản hoặc Đăng nhập -->
                 <?php if (SessionHelper::isLoggedIn()): ?>
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -107,7 +96,6 @@ if (session_status() === PHP_SESSION_NONE) {
                     </a>
                 <?php endif; ?>
 
-                <!-- Giỏ hàng -->
                 <a class="nav-link position-relative ms-3" href="/webbanhang/Product/cart">
                     <i class="bi bi-cart"></i>
                     <?php 
@@ -123,7 +111,6 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
     </div>
     
-    <!-- Thanh điều hướng chính cho các danh mục -->
     <nav class="navbar navbar-expand-lg navbar-main">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -143,14 +130,13 @@ if (session_status() === PHP_SESSION_NONE) {
                     <li class="nav-item">
                         <a class="nav-link" href="/webbanhang/product/category/3">Khác</a>
                     </li>
-                    <!-- Chỉ Admin mới thấy mục quản lý -->
                     <?php if (SessionHelper::isAdmin()): ?>
                         <li class="nav-item dropdown">
                              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Quản lý
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/webbanhang/product/add">Thêm sản phẩm</a></li>
+                                <li><a class="dropdown-item" href="/webbanhang/product/manage">Quản lý sản phẩm</a></li>
                                 <li><a class="dropdown-item" href="/webbanhang/order/index">Quản lý đơn hàng</a></li>
                                 <li><a class="dropdown-item" href="/webbanhang/category">Quản lý danh mục</a></li>
                                 <li><a class="dropdown-item" href="/webbanhang/user">Quản lý khách hàng</a></li>
@@ -165,5 +151,4 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Thẻ div này sẽ bao bọc toàn bộ nội dung chính của trang -->
 <div class="container mt-4 main-content">

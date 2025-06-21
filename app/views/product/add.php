@@ -3,8 +3,8 @@
 <div class="container mt-4 mb-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
                     <h3 class="card-title mb-0">Thêm sản phẩm mới</h3>
                 </div>
                 <div class="card-body">
@@ -18,15 +18,10 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="/webbanhang/Product/save" enctype="multipart/form-data">
+                    <form method="POST" action="/webbanhang/product/save" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="name" class="form-label">Tên sản phẩm</label>
                             <input type="text" id="name" name="name" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Mô tả</label>
-                            <textarea id="description" name="description" class="form-control" rows="5"></textarea>
                         </div>
 
                         <div class="row">
@@ -40,7 +35,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="category_id" class="form-label">Danh mục</label>
-                                <select id="category_id" name="category_id" class="form-select" required>
+                                <select id="category_id" name="category_id" class="form-select" required onchange="fetchSpecifications()">
                                     <option value="">-- Chọn danh mục --</option>
                                     <?php foreach ($categories as $category): ?>
                                         <option value="<?php echo $category->id; ?>">
@@ -48,6 +43,13 @@
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div id="dynamic-section">
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Mô tả chung</label>
+                                <textarea id="description" name="description" class="form-control" rows="5"></textarea>
                             </div>
                         </div>
 
@@ -66,5 +68,34 @@
         </div>
     </div>
 </div>
+
+<script>
+function fetchSpecifications() {
+    const categoryId = document.getElementById('category_id').value;
+    const dynamicSection = document.getElementById('dynamic-section');
+
+    // Nếu không chọn danh mục nào, quay về ô mô tả
+    if (!categoryId) {
+        dynamicSection.innerHTML = `
+            <div class="mb-3">
+                <label for="description" class="form-label">Mô tả chung</label>
+                <textarea id="description" name="description" class="form-control" rows="5"></textarea>
+            </div>
+        `;
+        return;
+    }
+
+    // Gửi yêu cầu AJAX đến controller để lấy các trường thông số
+    fetch(`/webbanhang/product/getSpecTemplatesForCategory/${categoryId}`)
+        .then(response => response.text())
+        .then(html => {
+            dynamicSection.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error fetching specifications:', error);
+            dynamicSection.innerHTML = '<div class="alert alert-danger">Không thể tải thông số kỹ thuật.</div>';
+        });
+}
+</script>
 
 <?php include 'app/views/shares/footer.php'; ?>

@@ -20,6 +20,7 @@ class CategoryController extends BaseController {
     }
 
     public function add() {
+        $categories = $this->categoryModel->getCategories();
         include 'app/views/category/add.php';
     }
 
@@ -29,8 +30,10 @@ class CategoryController extends BaseController {
             exit();
         }
         $name = trim($_POST['name'] ?? '');
+        $parentId = $_POST['parent_id'] ?? null;
+
         if (!empty($name)) {
-            $this->categoryModel->addCategory($name);
+            $this->categoryModel->addCategory($name, $parentId);
         }
         header('Location: /webbanhang/category');
         exit();
@@ -39,32 +42,27 @@ class CategoryController extends BaseController {
     public function edit($id) {
         $category = $this->categoryModel->getCategoryById($id);
         $specTemplates = $this->categoryModel->getSpecTemplatesByCategoryId($id);
+        $categories = $this->categoryModel->getCategories();
         include 'app/views/category/edit.php';
     }
 
-    /**
-     * SỬA LỖI Ở ĐÂY: Hàm cập nhật và chuyển hướng về lại trang edit
-     */
     public function update($id) {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /webbanhang/category');
             exit();
         }
 
-        // Cập nhật tên danh mục
         $name = trim($_POST['name'] ?? '');
+        $parentId = $_POST['parent_id'] ?? null;
         if (!empty($name)) {
-            $this->categoryModel->updateCategory($id, $name);
+            $this->categoryModel->updateCategory($id, $name, $parentId);
         }
 
-        // Cập nhật các mẫu thông số
         $specNames = $_POST['specs'] ?? [];
         $this->categoryModel->updateSpecTemplates($id, $specNames);
 
-        // Thêm thông báo thành công vào session
         $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Đã cập nhật danh mục thành công!'];
 
-        // Chuyển hướng về lại chính trang sửa để xem kết quả
         header('Location: /webbanhang/category/edit/' . $id);
         exit();
     }

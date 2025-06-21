@@ -1,10 +1,33 @@
 <?php include 'app/views/shares/header.php'; ?>
 <div class="container mt-5">
     <h1>Chỉnh sửa Danh mục</h1>
+    
+    <?php
+    if (isset($_SESSION['flash_message'])) {
+        $flash = $_SESSION['flash_message'];
+        echo '<div class="alert alert-' . htmlspecialchars($flash['type']) . '">' . htmlspecialchars($flash['message']) . '</div>';
+        unset($_SESSION['flash_message']);
+    }
+    ?>
+
     <form action="/webbanhang/category/update/<?= $category->id ?>" method="POST">
-        <div class="mb-4">
+        <div class="mb-3">
             <label for="name" class="form-label">Tên Danh mục</label>
             <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($category->name) ?>" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="parent_id" class="form-label fw-bold">Thuộc danh mục cha</label>
+            <select class="form-select" id="parent_id" name="parent_id">
+                <option value="">-- Là danh mục gốc --</option>
+                <?php foreach ($categories as $cat): ?>
+                    <?php if ($cat->id != $category->id): // Ngăn chọn chính nó làm cha ?>
+                        <option value="<?= $cat->id ?>" <?= ($cat->id == $category->parent_id) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat->name) ?>
+                        </option>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <fieldset class="border p-3 mb-4">

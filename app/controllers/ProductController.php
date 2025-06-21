@@ -58,6 +58,15 @@ class ProductController extends BaseController {
 
     // --- CÁC CHỨC NĂNG QUẢN TRỊ SẢN PHẨM ---
 
+    public function manage() {
+        if (!SessionHelper::isAdmin()) {
+            header('Location: /webbanhang/product');
+            exit();
+        }
+        $products = $this->productModel->getProducts();
+        include 'app/views/product/manage.php';
+    }
+
     public function add() {
         if (!SessionHelper::isAdmin()) {
             header('Location: /webbanhang/product');
@@ -67,25 +76,68 @@ class ProductController extends BaseController {
         include 'app/views/product/add.php';
     }
 
+    public function getSpecTemplatesForCategory($categoryId) {
+        if (empty($categoryId)) {
+            echo '<div class="alert alert-warning">Vui lòng chọn một danh mục.</div>';
+            exit();
+        }
+
+        $specTemplates = $this->categoryModel->getSpecTemplatesByCategoryId($categoryId);
+
+        if (empty($specTemplates)) {
+            echo '
+                <div class="alert alert-info">Danh mục này chưa có mẫu thông số kỹ thuật nào.</div>
+                <input type="hidden" name="description" value="">
+            ';
+            exit();
+        }
+
+        echo '<h4>Thông số kỹ thuật</h4><hr>';
+        foreach ($specTemplates as $template) {
+            $specName = htmlspecialchars($template->spec_name);
+            echo "
+            <div class='mb-3'>
+                <label for='spec_{$specName}' class='form-label'>{$specName}</label>
+                <input type='text' id='spec_{$specName}' name='specs[{$specName}]' class='form-control'>
+            </div>
+            ";
+        }
+        exit();
+    }
+
     public function save() {
         if (!SessionHelper::isAdmin() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /webbanhang/product');
             exit();
         }
+        
         $name = trim($_POST['name'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $price = floatval($_POST['price'] ?? 0);
         $category_id = intval($_POST['category_id'] ?? 0);
+
         try {
             $image = "";
             if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] === 0) {
                 $image = $this->uploadImage($_FILES['image']);
             }
-            $this->productModel->addProduct($name, $description, $price, $category_id, $image);
-            header('Location: /webbanhang/product');
-            exit();
+
+            $newProductId = $this->productModel->addProduct($name, $description, $price, $category_id, $image);
+
+            if ($newProductId) {
+                $specsData = $_POST['specs'] ?? [];
+                if (!empty($specsData)) {
+                    $this->productModel->updateSpecifications($newProductId, $specsData);
+                }
+                
+                header('Location: /webbanhang/product/manage');
+                exit();
+            } else {
+                 throw new Exception("Thêm sản phẩm chính thất bại.");
+            }
+
         } catch (Exception $e) {
-            $errors = ['image' => $e->getMessage()];
+            $errors = ['general' => $e->getMessage()];
             $categories = $this->categoryModel->getCategories();
             include 'app/views/product/add.php';
         }
@@ -129,7 +181,7 @@ class ProductController extends BaseController {
             $this->productModel->updateProduct($id, $name, $description, $price, $category_id, $image);
             $specsData = $_POST['specs'] ?? [];
             $this->productModel->updateSpecifications($id, $specsData);
-            header('Location: /webbanhang/product');
+            header('Location: /webbanhang/product/manage');
             exit();
         } catch (Exception $e) {
             die("Lỗi cập nhật: " . $e->getMessage());
@@ -142,7 +194,7 @@ class ProductController extends BaseController {
             exit();
         }
         if ($this->productModel->deleteProduct($id)) {
-            header('Location: /webbanhang/product');
+            header('Location: /webbanhang/product/manage');
             exit();
         } else {
             die("Có lỗi xảy ra khi xóa sản phẩm.");

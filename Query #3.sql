@@ -1,0 +1,3 @@
+ALTER TABLE `category`
+ADD COLUMN `parent_id` INT(11) NULL DEFAULT NULL AFTER `name`,
+ADD FOREIGN KEY (`parent_id`) REFERENCES `category`(`id`) ON DELETE SET NULL;
